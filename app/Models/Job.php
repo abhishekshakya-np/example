@@ -1,39 +1,32 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class job
+class Job extends Model
 {
-    public static function all(): array
-    {
-        return [
-            [
-                'id' => 1,
-                'title' => 'Director',
-                'salary' => '$50,000'
-            ],
-            [
-                'id' => 2,
-                'title' => 'Programmer',
-                'salary' => '$10,000'
-            ],
-            [
-                'id' => 3,
-                'title' => 'Teacher',
-                'salary' => '$40,000'
-            ]
-        ];
-    }
+    use HasFactory;
 
-    public static function find(int $id): array
-    {
-        $job = Arr::first(static::all(), fn($job) => $job['id'] == $id);
+    protected $table = 'job_listing';
 
-        if(! $job){
-            abort(404);
-        }
-        return $job;
+    protected $fillable = [
+        'title',
+        'salary',
+        'employer_id',
+    ];
+
+    protected $casts = [
+        'employer_id' => 'integer',
+    ];
+
+    /**
+     * Get the employer that owns the job.
+     */
+    public function employer(): BelongsTo
+    {
+        return $this->belongsTo(Employer::class);
     }
 }
-
